@@ -102,14 +102,9 @@ public class AEXMLElement: NSObject {
     /// This element name is used when unable to find element.
     public static let errorElementName = "AEXMLError"
     
-    // The first element with given name **(AEXMLError element if not exists)**.
-    public subscript(key: String) -> AEXMLElement {
-        if name == AEXMLElement.errorElementName {
-            return self
-        } else {
-            let filtered = children.filter { $0.name == key }
-            return filtered.count > 0 ? filtered.first! : AEXMLElement(AEXMLElement.errorElementName, value: "element <\(key)> not found")
-        }
+    // The first element with given name or nil if element is not exists.
+    public subscript(key: String) -> AEXMLElement? {
+        return children.filter { $0.name == key }.first
     }
     
     /// Returns all of the elements with equal name as `self` **(nil if not exists)**.

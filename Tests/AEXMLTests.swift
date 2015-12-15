@@ -84,12 +84,12 @@ class AEXMLTests: XCTestCase {
     }
     
     func testParentElement() {
-        XCTAssertEqual(exampleXML.root["cats"].parent!.name, "animals", "Should be able to find parent element.")
+        XCTAssertEqual(exampleXML.root["cats"]!.parent!.name, "animals", "Should be able to find parent element.")
     }
     
     func testChildrenElements() {
         var count = 0
-        for _ in exampleXML.root["cats"].children {
+        for _ in exampleXML.root["cats"]!.children {
             count++
         }
         XCTAssertEqual(count, 4, "Should be able to iterate children elements")
@@ -101,7 +101,7 @@ class AEXMLTests: XCTestCase {
     }
     
     func testAttributes() {
-        let firstCatAttributes = exampleXML.root["cats"]["cat"].attributes
+        let firstCatAttributes = exampleXML.root["cats"]!["cat"]!.attributes
         
         // iterate attributes
         var count = 0
@@ -119,54 +119,55 @@ class AEXMLTests: XCTestCase {
     }
     
     func testValue() {
-        let firstPlant = plantsXML.root["PLANT"]
+        let firstPlant = plantsXML.root["PLANT"]!
         
-        let firstPlantCommon = firstPlant["COMMON"].value!
+        let firstPlantCommon = firstPlant["COMMON"]!.value!
         XCTAssertEqual(firstPlantCommon, "Bloodroot", "Should be able to return element value as optional string.")
         
-        let firstPlantElementWithoutValue = firstPlant["ELEMENTWITHOUTVALUE"].value
+        let firstPlantElementWithoutValue = firstPlant["ELEMENTWITHOUTVALUE"]!.value
         XCTAssertNil(firstPlantElementWithoutValue, "Should be able to have nil value.")
         
-        let firstPlantEmptyElement = firstPlant["EMPTYELEMENT"].value
+        let firstPlantEmptyElement = firstPlant["EMPTYELEMENT"]!.value
         XCTAssertNil(firstPlantEmptyElement, "Should be able to have nil value.")
     }
     
     func testStringValue() {
-        let firstPlant = plantsXML.root["PLANT"]
+        let firstPlant = plantsXML.root["PLANT"]!
         
-        let firstPlantCommon = firstPlant["COMMON"].stringValue
+        let firstPlantCommon = firstPlant["COMMON"]!.stringValue
         XCTAssertEqual(firstPlantCommon, "Bloodroot", "Should be able to return element value as string.")
         
-        let firstPlantElementWithoutValue = firstPlant["ELEMENTWITHOUTVALUE"].stringValue
+        let firstPlantElementWithoutValue = firstPlant["ELEMENTWITHOUTVALUE"]!.stringValue
         XCTAssertEqual(firstPlantElementWithoutValue, "", "Should be able to return empty string if element has no value.")
         
-        let firstPlantEmptyElement = firstPlant["EMPTYELEMENT"].stringValue
+        let firstPlantEmptyElement = firstPlant["EMPTYELEMENT"]!.stringValue
         XCTAssertEqual(firstPlantEmptyElement, String(), "Should be able to return empty string if element has no value.")
     }
     
     func testBoolValue() {
-        XCTAssertEqual(plantsXML.root["PLANT"]["TRUESTRING"].boolValue, true, "Should be able to cast element value as Bool.")
-        XCTAssertEqual(plantsXML.root["PLANT"]["TRUENUMBER"].boolValue, true, "Should be able to cast element value as Bool.")
-        XCTAssertEqual(plantsXML.root["PLANT"]["FALSEANYTHINGELSE"].boolValue, false, "Should be able to cast element value as Bool.")
+        XCTAssertEqual(plantsXML.root["PLANT"]!["TRUESTRING"]!.boolValue, true, "Should be able to cast element value as Bool.")
+        XCTAssertEqual(plantsXML.root["PLANT"]!["TRUENUMBER"]!.boolValue, true, "Should be able to cast element value as Bool.")
+        XCTAssertEqual(plantsXML.root["PLANT"]!["FALSEANYTHINGELSE"]!.boolValue, false, "Should be able to cast element value as Bool.")
     }
     
     func testIntValue() {
-        let firstPlantZone = plantsXML.root["PLANT"]["ZONE"].intValue
+        let firstPlantZone = plantsXML.root["PLANT"]!["ZONE"]!.intValue
         XCTAssertEqual(firstPlantZone, 4, "Should be able to cast element value as Integer.")
     }
     
     func testDoubleValue() {
-        let firstPlantPrice = plantsXML.root["PLANT"]["PRICE"].doubleValue
+        let firstPlantPrice = plantsXML.root["PLANT"]!["PRICE"]!.doubleValue
         XCTAssertEqual(firstPlantPrice, 2.44, "Should be able to cast element value as Double.")
     }
     
     func testNotExistingElement() {
         // non-optional
-        XCTAssertEqual(exampleXML.root["ducks"]["duck"].name, AEXMLElement.errorElementName, "Should be able to tell you if element does not exist.")
-        XCTAssertEqual(exampleXML.root["ducks"]["duck"].stringValue, "element <ducks> not found", "Should be able to tell you which element does not exist.")
+        XCTAssertNil(exampleXML.root["ducks"]?["duck"]?.name, "Should be able to tell you if element does not exist.")
+
+        XCTAssertNil(exampleXML.root["ducks"]?["duck"]?.stringValue, "Should be able to tell you which element does not exist.")
         
         // optional
-        if let _ = exampleXML.root["ducks"]["duck"].first {
+        if let _ = exampleXML.root["ducks"]?["duck"]?.first {
             XCTFail("Should not be able to find ducks here.")
         } else {
             XCTAssert(true)
@@ -175,7 +176,7 @@ class AEXMLTests: XCTestCase {
     
     func testAllElements() {
         var count = 0
-        if let cats = exampleXML.root["cats"]["cat"].all {
+        if let cats = exampleXML.root["cats"]!["cat"]!.all {
             for cat in cats {
                 XCTAssertNotNil(cat.parent, "Each child element should have its parent element.")
                 count++
@@ -185,7 +186,7 @@ class AEXMLTests: XCTestCase {
     }
     
     func testFirstElement() {
-        let catElement = exampleXML.root["cats"]["cat"]
+        let catElement = exampleXML.root["cats"]!["cat"]!
         let firstCatExpectedValue = "Tinna"
         
         // non-optional
@@ -200,7 +201,7 @@ class AEXMLTests: XCTestCase {
     }
     
     func testLastElement() {
-        if let dog = exampleXML.root["dogs"]["dog"].last {
+        if let dog = exampleXML.root["dogs"]!["dog"]!.last {
             XCTAssertEqual(dog.stringValue, "Kika", "Should be able to find the last element.")
         } else {
             XCTFail("Should be able to find the last element.")
@@ -208,16 +209,16 @@ class AEXMLTests: XCTestCase {
     }
     
     func testCountElements() {
-        let dogsCount = exampleXML.root["dogs"]["dog"].count
+        let dogsCount = exampleXML.root["dogs"]!["dog"]!.count
         XCTAssertEqual(dogsCount, 4, "Should be able to count elements.")
     }
     
     func testAllWithValue() {
-        let cats = exampleXML.root["cats"]
+        let cats = exampleXML.root["cats"]!
         cats.addChild(name: "cat", value: "Tinna")
         
         var count = 0
-        if let tinnas = cats["cat"].allWithValue("Tinna") {
+        if let tinnas = cats["cat"]!.allWithValue("Tinna") {
             for _ in tinnas {
                 count++
             }
@@ -227,7 +228,7 @@ class AEXMLTests: XCTestCase {
     
     func testAllWithAttributes() {
         var count = 0
-        if let bulls = exampleXML.root["dogs"]["dog"].allWithAttributes(["color" : "white"]) {
+        if let bulls = exampleXML.root["dogs"]!["dog"]!.allWithAttributes(["color" : "white"]) {
             for _ in bulls {
                 count++
             }
@@ -245,20 +246,20 @@ class AEXMLTests: XCTestCase {
         
         let animalsCount = exampleXML.root.children.count
         XCTAssertEqual(animalsCount, 3, "Should be able to add child elements to an element.")
-        XCTAssertEqual(exampleXML.root["ducks"]["duck"].last!.stringValue, "Scrooge", "Should be able to iterate ducks now.")
+        XCTAssertEqual(exampleXML.root["ducks"]!["duck"]!.last!.stringValue, "Scrooge", "Should be able to iterate ducks now.")
     }
     
     func testAddChildWithAttributes() {
-        let cats = exampleXML.root["cats"]
-        let dogs = exampleXML.root["dogs"]
+        let cats = exampleXML.root["cats"]!
+        let dogs = exampleXML.root["dogs"]!
         
         cats.addChild(name: "cat", value: "Garfield", attributes: ["breed" : "tabby", "color" : "orange"])
         dogs.addChild(name: "dog", value: "Snoopy", attributes: ["breed" : "beagle", "color" : "white"])
         
-        let catsCount = cats["cat"].count
-        let dogsCount = dogs["dog"].count
+        let catsCount = cats["cat"]!.count
+        let dogsCount = dogs["dog"]!.count
         
-        let lastCat = cats["cat"].last!
+        let lastCat = cats["cat"]!.last!
         let penultDog = dogs.children[3]
         
         XCTAssertEqual(catsCount, 5, "Should be able to add child element with attributes to an element.")
@@ -269,7 +270,7 @@ class AEXMLTests: XCTestCase {
     }
     
     func testAddAttributes() {
-        let firstCat = exampleXML.root["cats"]["cat"]
+        let firstCat = exampleXML.root["cats"]!["cat"]!
 
         firstCat.attributes["funny"] = "true"
         firstCat.attributes["speed"] = "fast"
@@ -280,15 +281,15 @@ class AEXMLTests: XCTestCase {
     }
     
     func testRemoveChild() {
-        let cats = exampleXML.root["cats"]
-        let lastCat = cats["cat"].last!
+        let cats = exampleXML.root["cats"]!
+        let lastCat = cats["cat"]!.last!
         let duplicateCat = cats.addChild(name: "cat", value: "Tinna", attributes: ["breed" : "Siberian", "color" : "lightgray"])
         
         lastCat.removeFromParent()
         duplicateCat.removeFromParent()
         
-        let catsCount = cats["cat"].count
-        let firstCat = cats["cat"]
+        let catsCount = cats["cat"]!.count
+        let firstCat = cats["cat"]!
         XCTAssertEqual(catsCount, 3, "Should be able to remove element from parent.")
         XCTAssertEqual(firstCat.stringValue, "Tinna", "Should be able to remove the exact element from parent.")
     }
